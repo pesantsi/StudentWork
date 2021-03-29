@@ -43,6 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Equipement.cs" />
+    <Compile Include="Hero.cs" />
+    <Compile Include="Histoire.cs" />
     <Compile Include="Opeator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
