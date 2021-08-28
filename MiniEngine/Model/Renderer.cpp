@@ -60,6 +60,7 @@ namespace Renderer
 
     TextureRef s_RadianceCubeMap;
     TextureRef s_IrradianceCubeMap;
+    TextureRef s_CubeMap;
     float s_SpecularIBLRange;
     float s_SpecularIBLBias;
     uint32_t g_SSAOFullScreenID;
@@ -301,10 +302,26 @@ void Renderer::SetIBLBias(float LODBias)
     s_SpecularIBLBias = Min(LODBias, s_SpecularIBLRange);
 }
 
+void Renderer::SetTexture(TextureRef texture)
+{
+    s_CubeMap = texture;
+
+    uint32_t DestCount = 1;
+    uint32_t SourceCounts[] = { 1 };
+
+    D3D12_CPU_DESCRIPTOR_HANDLE SourceTextures[] =
+    {
+        texture.IsValid() ? texture.GetSRV() : GetDefaultTexture(kBlackCubeMap),
+    };
+
+    g_Device->CopyDescriptors(1, &m_CommonTextures, &DestCount, DestCount, SourceTextures, SourceCounts, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
 void Renderer::Shutdown(void)
 {
     s_RadianceCubeMap = nullptr;
     s_IrradianceCubeMap = nullptr;
+    s_CubeMap = nullptr;
     TextureManager::Shutdown();
     s_TextureHeap.Destroy();
     s_SamplerHeap.Destroy();
@@ -455,6 +472,7 @@ void Renderer::DrawSkybox( GraphicsContext& gfxContext, const Camera& Camera, co
     skyPSCB.TextureLevel = s_SpecularIBLBias;
 
     gfxContext.SetRootSignature(m_RootSig);
+    gfxContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     gfxContext.SetPipelineState(m_SkyboxPSO);
 
     gfxContext.TransitionResource(g_SceneDepthBuffer, D3D12_RESOURCE_STATE_DEPTH_READ);

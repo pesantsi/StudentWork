@@ -64,6 +64,7 @@ namespace Renderer
     uint8_t GetPSO(uint16_t psoFlags);
     void SetIBLTextures(TextureRef diffuseIBL, TextureRef specularIBL);
     void SetIBLBias(float LODBias);
+    void SetTexture(TextureRef texture);
     void UpdateGlobalDescriptors(void);
     void DrawSkybox( GraphicsContext& gfxContext, const Camera& camera, const D3D12_VIEWPORT& viewport, const D3D12_RECT& scissor );
 
